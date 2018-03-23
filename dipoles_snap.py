@@ -33,8 +33,8 @@ ft = 0.2
 fg = 0.7
 
 nsb = 3
-nxp = 120
-nzp = 12
+nxp = 150
+nzp = 15
 
 ag = ac*(1.-fg)+amax*fg
 
@@ -54,18 +54,13 @@ print diplen
 
 # set camera properties
 fov = 30.*np.pi/180.
-nth = 200
-nr = 200
+nth = 300
+nr = 300
 
 # get grid of pixels
 px, py, pxe, pye = fm.get_pixels(nth, nr)
 pxf = px.flatten()
 pyf = py.flatten()
-
-# get grid of pixels
-#px, py, pxe, pye = fm.get_pixels(nth, nr)
-#pxf = px.flatten()
-#pyf = py.flatten()
 
 # simulate image
 pf = fm.cam_pixel_dipoles(sx, sy, sz, pxf, pyf, fov, diplen)

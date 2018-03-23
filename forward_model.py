@@ -68,9 +68,11 @@ def cam_pixel_dipoles(x, y, z, px, py, fov, diplen):
 
     # get pixel projections for each dipole
     print numdip
-    thet = np.linspace(0., 2.*np.pi, 7)
-    xc = diplen/2.*np.cos(thet)
-    yc = diplen/2.*np.sin(thet)
+    #thet = np.linspace(0., 2.*np.pi, 7)
+    xpert = np.array([1., -1., -1., 1.])
+    ypert = np.array([1., 1., -1., -1.])
+    xc = diplen/2.*xpert
+    yc = diplen/2.*ypert
 
     for i in range(numdip):
         pfil_tot = pfil_tot+get_pixels_poly(xc+x[i], yc+y[i], xc/xc*z[i], px, py, fov)

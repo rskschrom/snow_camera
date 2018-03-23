@@ -4,46 +4,22 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import forward_model as fm
 from crystal_dda.geometry import rotate
-from crystal_dda.polygons import make_branched_planar, make_poly3d
+from crystal_dda.polygons import make_branched_planar
 
-# canting
-def cant(x, y, z, ang_side, ang_azi):
-    ang_azi = ang_azi*np.pi/180.
-    ang_side = ang_side*np.pi/180.
+# create shape (in mm)
+nump = 25
+thpol = np.linspace(0., 2.*np.pi, nump)
+rad_mean = 100.
+pcvar = 0.2
+rad = rad_mean*((np.random.rand(nump)-0.5)*2.*pcvar+1.)
+xp = rad*np.cos(thpol)
+yp = rad*np.sin(thpol)
+zp = xp-xp
 
-    meanx = np.mean(x)
-    meany = np.mean(y)
-    meanz = np.mean(z)
-    x = x-meanx
-    y = y-meany
-    z = z-meanz
-
-    xrot = np.cos(ang_side)*x-np.sin(ang_side)*z
-    zrot = np.sin(ang_side)*x+np.cos(ang_side)*z
-    return xrot+meanx, y+meany, zrot+meanz
-
-# set values to create branched planar crystal with
-a = 3.
-c = 0.5
-amax = 3.
-ac = 0.5
-
-fb = 0.5
-ft = 0.2
-fg = 0.7
-
-nsb = 5
-
-ag = amax*fg
-
-xp2, yp2 = make_branched_planar(amax, ac, ft, fb, fg, nsb, 0.)
-xp, yp, zp = make_poly3d(xp2, yp2, 2.*c)
-#zp = xp[:]-xp[:]
-
-# move polygon to location
+# move polygon to location (in m)
 sx = 0.
 sy = 0.
-sz = 0.1
+sz = 5.
 
 sx = sx+xp/1.e3
 sy = sy+yp/1.e3
@@ -61,12 +37,12 @@ pyf = py.flatten()
 pf_tot = np.zeros([nth, nr])
 
 # set time and velocity variables
-dt = 0.005
+dt = 0.05
 u = 0.0
 v = 0.0
-w = -0.8
-nt = 25
-omega = 4800.
+w = -1.5
+nt = 50
+omega = 200.
 cant_max = 40.
 
 for i in range(nt+1):
@@ -75,27 +51,25 @@ for i in range(nt+1):
     pf = fm.get_pixels_poly(sx, sy, sz, pxf, pyf, fov)
     pf.shape = (nth, nr)
     pf_tot = pf_tot+pf
-    cxp, cyp = fm.cam_pos_poly(sx, sy, sz, fov)
 
     # plot
     plt.figure(i)
-    #plt.pcolormesh(pxe, pye, pf, cmap='Blues')
-    plt.plot(cxp, cyp, 'r', lw=3.)
+    plt.pcolormesh(pxe, pye, pf, cmap='Blues')
     ax = plt.gca()
 
     ax.set_xlim([-1., 1.])
     ax.set_ylim([-1., 1.])
     ax.set_aspect(1.)
 
-    plt.savefig('img_{:03d}.png'.format(i), dpi=40)
+    plt.savefig('img_{:03d}.png'.format(i), dpi=20)
     plt.close()
 
     # update position
     sx = dt*(u+(np.random.rand(1)-0.5)*0.2)+sx
     sy = dt*(v+(np.random.rand(1)-0.5)*0.2)+sy
-    sx, sy = rotate(sx, sy, omega*dt)
+    sx, sy = rotate(sx, sy, (omega+(np.random.rand(1)-0.5)*30.)*dt)
     sz = dt*(w+(np.random.rand(1)-0.5)/2.)+sz
-    sx, sy, sz = cant(sx, sy, sz, 2.*np.pi/nt*cant_max*np.cos(2.*i*np.pi/nt), 0.)
+    #sx, sy, sz = cant(sx, sy, sz, 2.*np.pi/nt*cant_max*np.cos(2.*i*np.pi/nt), 0.)
 
 '''
 # plot sum of images

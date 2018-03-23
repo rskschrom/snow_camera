@@ -80,11 +80,11 @@ for i in range(nt+1):
     plt.pcolormesh(ax*1.e3, ay*1.e3, pf, cmap='Blues')
     ax = plt.gca()
 
-    ax.set_xlim([-lens_w/2.*1.e3, lens_w/2.*1.e3])
-    ax.set_ylim([-lens_w/2.*1.e3, lens_w/2.*1.e3])
+    ax.set_xlim([-1., 1.])
+    ax.set_ylim([-1., 1.])
     ax.set_aspect(1.)
 
-    plt.savefig('circ_{:03d}.png'.format(i))
+    plt.savefig('img_{:03d}.png'.format(i), dpi=40)
     plt.close()
 
     # update position

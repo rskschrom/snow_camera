@@ -43,11 +43,12 @@ xp, yp, zp = make_poly3d(xp2, yp2, 2.*c)
 # move polygon to location
 sx = 0.
 sy = 0.
-sz = 0.1
+sz = 0.02
 
 sx = sx+xp/1.e3
 sy = sy+yp/1.e3
 sz = sz+zp/1.e3
+sx, sy, sz = cant(sx, sy, sz, 50., 0.)
 
 # set camera properties
 fov = 30.*np.pi/180.
@@ -58,55 +59,19 @@ nr = 200
 px, py, pxe, pye = fm.get_pixels(nth, nr)
 pxf = px.flatten()
 pyf = py.flatten()
-pf_tot = np.zeros([nth, nr])
 
-# set time and velocity variables
-dt = 0.005
-u = 0.0
-v = 0.0
-w = -0.8
-nt = 25
-omega = 4800.
-cant_max = 40.
+# simulate image
+pf = fm.get_pixels_poly(sx, sy, sz, pxf, pyf, fov)
+pf.shape = (nth, nr)
+cxp, cyp = fm.cam_pos_poly(sx, sy, sz, fov)
 
-for i in range(nt+1):
-    # simulate image
-    print i
-    pf = fm.get_pixels_poly(sx, sy, sz, pxf, pyf, fov)
-    pf.shape = (nth, nr)
-    pf_tot = pf_tot+pf
-    cxp, cyp = fm.cam_pos_poly(sx, sy, sz, fov)
-
-    # plot
-    plt.figure(i)
-    #plt.pcolormesh(pxe, pye, pf, cmap='Blues')
-    plt.plot(cxp, cyp, 'r', lw=3.)
-    ax = plt.gca()
-
-    ax.set_xlim([-1., 1.])
-    ax.set_ylim([-1., 1.])
-    ax.set_aspect(1.)
-
-    plt.savefig('img_{:03d}.png'.format(i), dpi=40)
-    plt.close()
-
-    # update position
-    sx = dt*(u+(np.random.rand(1)-0.5)*0.2)+sx
-    sy = dt*(v+(np.random.rand(1)-0.5)*0.2)+sy
-    sx, sy = rotate(sx, sy, omega*dt)
-    sz = dt*(w+(np.random.rand(1)-0.5)/2.)+sz
-    sx, sy, sz = cant(sx, sy, sz, 2.*np.pi/nt*cant_max*np.cos(2.*i*np.pi/nt), 0.)
-
-'''
-# plot sum of images
-plt.figure(i)
-plt.pcolormesh(pxe, pye, pf_tot, cmap='Blues')
-plt.colorbar()
-
+# plot
+plt.pcolormesh(pxe, pye, pf, cmap='Blues')
+plt.plot(cxp, cyp, 'r', lw=3.)
 ax = plt.gca()
+
 ax.set_xlim([-1., 1.])
 ax.set_ylim([-1., 1.])
 ax.set_aspect(1.)
 
-plt.savefig('img_total.png'.format(i), dpi=120)
-'''
+plt.savefig('snap.png', dpi=90)

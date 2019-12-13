@@ -5,10 +5,10 @@ from scene import Scene
 import matplotlib.pyplot as plt
 
 # create camera object
-nx = 200
+nx = 800
 ny = int(nx/4*3)
 cam = Camera(0., np.array([0.,0.,-300.]), np.array([0.,0.,-500.]),
-             pixel_dims=(nx,ny),pixel_len=1.6)
+             pixel_dims=(nx,ny),pixel_len=0.8)
 cam.create_rays()
 rays = cam.get_rays()
 
@@ -33,7 +33,7 @@ plt.savefig(f'shade_motion_000.png', dpi=375./(2400./nx))
 plt.close()
 
 # render images in time as particles move
-ntime = 100
+ntime = 50
 dt = 0.004
 mot_vec = np.zeros([3,nsphere])
 mot_vec[1,:] = -1.2e3

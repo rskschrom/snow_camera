@@ -33,14 +33,15 @@ plt.savefig(f'shade_motion_000.png', dpi=375./(2400./nx))
 plt.close()
 
 # render images in time as particles move
-ntime = 25
-dt = 0.01
+ntime = 50
+dt = 0.004
 mot_vec = np.zeros([3,nsphere])
 mot_vec[1,:] = -1.2e3
-mot_vec[0,:] = -0.3e3+0.2*(np.random.rand(nsphere)-0.5)
+mot_vec[0,:] = -0.3e3
 for i in range(ntime-1):
     print(i)
     scene = cam.get_scene()
+    mot_vec[0,:] = mot_vec[0,:]+0.3*(np.random.rand(nsphere)-0.5)
     scene.motion(mot_vec, dt)
     cam.set_scene(scene)
     shade = cam.render()

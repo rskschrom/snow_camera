@@ -1,3 +1,0 @@
-#!/bin/bash
-
-convert circ*.png +repage -loop 0 -delay 20 circ.gif

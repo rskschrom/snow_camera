@@ -19,6 +19,9 @@ class Sphere(Shape):
         self.radius = radius
         return
 
+    def get_position(self):
+        return self.position
+
     # get intersection point(s) of ray with sphere
     def get_surface_intersection(self, rays):
         ray_pnts = rays.get_points()

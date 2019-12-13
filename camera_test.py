@@ -7,20 +7,27 @@ import matplotlib.pyplot as plt
 # create camera object
 nx = 800
 ny = int(nx/4*3)
-cam = Camera(0., np.array([0.,0.,-500.]), np.array([20.,25.,-30.]),
+cam = Camera(0., np.array([0.,0.,-500.]), np.array([0.,0.,-500.]),
              pixel_dims=(nx,ny),pixel_len=0.5)
 cam.create_rays()
 rays = cam.get_rays()
 
-# create sphere and add to scene
-sphere1 = Sphere(np.array([0.,0.,100.]), 10.)
-sphere2 = Sphere(np.array([-200.,0.,200.]), 10.)
-scene = Scene([sphere1,sphere2])
+# create a bunch of spheres and add to scene
+nsphere = 100
+rad = 10.
+xrnd = 400.*(np.random.rand(nsphere)-0.5)
+yrnd = 400.*(np.random.rand(nsphere)-0.5)
+zrnd = 500.*np.random.rand(nsphere)+50.
+spheres = []
+
+for i in range(nsphere):
+    spheres.append(Sphere(np.array([xrnd[i],yrnd[i],zrnd[i]]), 10.))
+scene = Scene(spheres)
 
 # render scene and plot
 cam.set_scene(scene)
 shade = cam.render()
 px, py,_ = cam.get_pixel_grid()
 
-plt.imshow(shade[:,::-1].T, cmap='Greys')
+plt.imshow(shade[:,::-1].T, cmap='Greys_r')
 plt.savefig('shade_test.png', dpi=375./(2400./nx))

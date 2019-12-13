@@ -42,6 +42,10 @@ class Camera():
         self.scene = scene
         return
 
+    # get scene for camera
+    def get_scene(self):
+        return self.scene
+
     # get rays
     def get_rays(self):
         return self.rays
@@ -75,16 +79,19 @@ class Camera():
         rays = self.rays
         nray = rays.get_nray()
 
-        # calculate shading
+        # calculate shading (0-dark,1-light)
         sfc_pnt, nvec, dist = self.scene.get_surface_overlap(rays)
         lgt_pos = self.light_pos[...,np.newaxis]
         lvec = sfc_pnt-lgt_pos
         ldist = np.sqrt(np.sum(lvec**2., axis=0))
         ldir = lvec/ldist[np.newaxis,...]
 
-        shade = np.einsum("ij,ij->j", nvec, ldir)
-        shade[dist==1.e9] = 0.
+        shade = np.einsum("ij,ij->j", -nvec, ldir)
+        #shade[dist==1.e9] = 1.
         shade = shade/(ldist/np.max(ldist))**2.
+        shade = (shade-np.min(shade))/(np.max(shade)-np.min(shade))
+        print(np.min(shade), np.max(shade))
+        shade[dist==1.e9] = 0.
 
         # reshape
         nxpix = 2*int(self.pixel_dims[0]/2)+1

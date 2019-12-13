@@ -5,10 +5,10 @@ from scene import Scene
 import matplotlib.pyplot as plt
 
 # create camera object
-nx = 800
+nx = 200
 ny = int(nx/4*3)
 cam = Camera(0., np.array([0.,0.,-300.]), np.array([0.,0.,-500.]),
-             pixel_dims=(nx,ny),pixel_len=0.4)
+             pixel_dims=(nx,ny),pixel_len=1.6)
 cam.create_rays()
 rays = cam.get_rays()
 
@@ -33,7 +33,7 @@ plt.savefig(f'shade_motion_000.png', dpi=375./(2400./nx))
 plt.close()
 
 # render images in time as particles move
-ntime = 50
+ntime = 100
 dt = 0.004
 mot_vec = np.zeros([3,nsphere])
 mot_vec[1,:] = -1.2e3
@@ -41,7 +41,8 @@ mot_vec[0,:] = -0.3e3
 for i in range(ntime-1):
     print(i)
     scene = cam.get_scene()
-    mot_vec[0,:] = mot_vec[0,:]+0.3*(np.random.rand(nsphere)-0.5)
+    mot_vec[0,:] = mot_vec[0,:]+0.5*(np.random.rand(nsphere)-0.5)
+    mot_vec[2,:] = mot_vec[2,:]+0.5*(np.random.rand(nsphere)-0.5)
     scene.motion(mot_vec, dt)
     cam.set_scene(scene)
     shade = cam.render()
